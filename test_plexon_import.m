@@ -2,10 +2,10 @@
 
 
 % must be ABSOLUTE path to filename
-plxname = '/Users/jacobyates/Dropbox/MatlabCode/Projects/2014_gaborDots/nancyChamberMappingMThyperflow/nancy20141023MT_L5P5_d10841.plx';
-
+plxname = '/Users/katz/Dropbox/Code/pdstools/demoPlxFiles/pat20140225rcgfreechoice1453_d8845_forKenneth_unsorted.plx';
+tic
 pl = readPLXFileC(plxname);
-
+toc
 % get the sampling rate of each channel
 samplingRates = [pl.ContinuousChannels(:).ADFrequency];
 
@@ -17,10 +17,12 @@ samplingRates = [pl.ContinuousChannels(:).ADFrequency];
 
 % find the slow rate, because that's where the LFP lives
 slowRate = min(unique(samplingRates));
+fastRate = max(unique(samplingRates));
 
 hasContinuousData = (pl.ContSampleCounts ~=0); % only take channels that have valid samples
 
-continuousChannels = [pl.ContinuousChannels(samplingRates==slowRate & hasContinuousData).Channel]; % these are good LFP channels
+% continuousChannels = [pl.ContinuousChannels(samplingRates==slowRate & hasContinuousData).Channel]; % these are good LFP channels
+continuousChannels = [pl.ContinuousChannels(samplingRates==fastRate & hasContinuousData).Channel]; % these are good LFP channels
 
 nContinuousChannels = numel(continuousChannels);
 
@@ -33,11 +35,11 @@ tic
 [lfp_info, lfp_data] = plx.getAnalog(pl1, continuousChannels+1);
 toc
 
-pl2 = readPLXFileC(plname, 'events');
+pl2 = readPLXFileC(plxname, 'events');
 
 
 %% Get events
-[events, strobed] = plx.getEvents(pl2);
+[events, strobed] = plx.getEvents(pl3);
 
 %% Get Spikes
 pls = readPLXFileC(plxname, 'spikes', 'waves');
